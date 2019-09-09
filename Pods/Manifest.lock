@@ -1,0 +1,51 @@
+PODS:
+  - iOSSnapshotTestCase (4.0.1):
+    - iOSSnapshotTestCase/SwiftSupport (= 4.0.1)
+  - iOSSnapshotTestCase/Core (4.0.1)
+  - iOSSnapshotTestCase/SwiftSupport (4.0.1):
+    - iOSSnapshotTestCase/Core
+  - Kingfisher (4.10.1)
+  - Nimble (7.3.1)
+  - Nimble-Snapshots (6.9.0):
+    - Nimble-Snapshots/Core (= 6.9.0)
+  - Nimble-Snapshots/Core (6.9.0):
+    - iOSSnapshotTestCase (~> 4.0)
+    - Nimble (~> 7.0)
+  - Quick (1.3.0)
+  - Reusable (4.0.5):
+    - Reusable/Storyboard (= 4.0.5)
+    - Reusable/View (= 4.0.5)
+  - Reusable/Storyboard (4.0.5)
+  - Reusable/View (4.0.5)
+  - SnapKit (5.0.1)
+
+DEPENDENCIES:
+  - Kingfisher (~> 4.2)
+  - Nimble (= 7.3.1)
+  - Nimble-Snapshots (= 6.9.0)
+  - Quick (= 1.3.0)
+  - Reusable (~> 4.0.2)
+  - SnapKit (~> 5.0.0)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - iOSSnapshotTestCase
+    - Kingfisher
+    - Nimble
+    - Nimble-Snapshots
+    - Quick
+    - Reusable
+    - SnapKit
+
+SPEC CHECKSUMS:
+  iOSSnapshotTestCase: f3b2b7e606fe03fdbe49af84316bd235df32dc44
+  Kingfisher: c148cd7b47ebde9989f6bc7c27dcaa79d81279a0
+  Nimble: 04f732da099ea4d153122aec8c2a88fd0c7219ae
+  Nimble-Snapshots: 79394f8d0aea3df54bd5ff78ee9dff05a523a09c
+  Quick: 03278013f71aa05fe9ecabc94fbcc6835f1ee76f
+  Reusable: 188be1a54ac0691bc66e5bb24ec6eb91971b315b
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
+
+PODFILE CHECKSUM: 10f5c0b4587b8cabee114fc05a7ab42817f5e109
+
+COCOAPODS: 1.5.2
