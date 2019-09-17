@@ -60,11 +60,11 @@ class PokedexController: UICollectionViewController{
     
     //MARK: - HELPER FUNCTIONS
     
-//    func showPokemonInfoController(withPokemon pokemon: Pokemon) {
-//        let controller = PokemonInfoController()
-//        controller.pokemon = pokemon
-//        self.navigationController?.pushViewController(controller, animated: true)
-//    }
+    func showPokemonInfoController(withPokemon pokemon: Pokemon) {
+        let controller = PokemonInfoController()
+        controller.pokemon = pokemon
+        self.navigationController?.pushViewController(controller, animated: true)
+    }
     
     func configureSearchBar(shouldShow: Bool) {
         
@@ -160,6 +160,11 @@ extension PokedexController{
         cell.delegate = self
         return cell
     }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let poke = inSearchMode ? filteredPokemon[indexPath.row] : pokemon[indexPath.row]
+        showPokemonInfoController(withPokemon: poke)
+    }
 }
 
 extension PokedexController: UICollectionViewDelegateFlowLayout{
@@ -171,12 +176,6 @@ extension PokedexController: UICollectionViewDelegateFlowLayout{
         
         let width = (view.frame.width - 36) / 3
         return CGSize(width: width, height: width)
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let controller = PokemonInfoController()
-        controller.pokemon = inSearchMode ? filteredPokemon[indexPath.row] : pokemon[indexPath.row]
-        navigationController?.pushViewController(controller, animated: true)
     }
     
 }
