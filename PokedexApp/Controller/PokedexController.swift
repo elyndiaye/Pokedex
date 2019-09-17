@@ -172,6 +172,13 @@ extension PokedexController: UICollectionViewDelegateFlowLayout{
         let width = (view.frame.width - 36) / 3
         return CGSize(width: width, height: width)
     }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let controller = PokemonInfoController()
+        controller.pokemon = inSearchMode ? filteredPokemon[indexPath.row] : pokemon[indexPath.row]
+        navigationController?.pushViewController(controller, animated: true)
+    }
+    
 }
 
 // MARK: - PokedexCellDelegate
