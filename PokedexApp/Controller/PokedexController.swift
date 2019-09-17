@@ -163,6 +163,18 @@ extension PokedexController{
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let poke = inSearchMode ? filteredPokemon[indexPath.row] : pokemon[indexPath.row]
+        var pokemonEvoArray = [Pokemon]()
+        
+        if let evoChain = poke.evolutionChain {
+            let evolutionChain = EvolutionChain(evolutionArray: evoChain)
+            let evoIds = evolutionChain.evolutionIds
+            
+            evoIds.forEach { (id) in
+                pokemonEvoArray.append(pokemon[id - 1])
+            }
+            poke.evoArray = pokemonEvoArray
+        }
+        
         showPokemonInfoController(withPokemon: poke)
     }
 }
@@ -187,7 +199,7 @@ extension PokedexController: PokedexCellDelegate {
     func presentInfoView(withPokemon pokemon: Pokemon) {
         print("passou")
         
-        //configureSearchBar(shouldShow: false)
+        configureSearchBar(shouldShow: false)
         navigationItem.rightBarButtonItem?.isEnabled = false
         
         view.addSubview(infoView)
