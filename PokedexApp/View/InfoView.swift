@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 protocol InfoViewDelegate {
-    func dismissInfoView(withPokemon pokemon: Pokemon?)
+    func dismissInfoView(withPokemonViewModel pokemonViewModel: PokemonViewModel?)
 }
 
 class InfoView: UIView {
@@ -18,18 +18,42 @@ class InfoView: UIView {
     // MARK: - Properties
     var delegate: InfoViewDelegate?
     
-    var pokemon: Pokemon? {
-        didSet {
-            guard let pokemon = self.pokemon else { return }
-            guard let type = pokemon.type else { return }
-            guard let defense = pokemon.defense else { return }
-            guard let attack = pokemon.attack else { return }
-            guard let id = pokemon.id else { return }
-            guard let height = pokemon.height else { return }
-            guard let weight = pokemon.weight else { return }
+//    var pokemon: Pokemon? {
+//        didSet {
+//            guard let pokemon = self.pokemon else { return }
+//            guard let type = pokemon.type else { return }
+//            guard let defense = pokemon.defense else { return }
+//            guard let attack = pokemon.attack else { return }
+//            guard let id = pokemon.id else { return }
+//            guard let height = pokemon.height else { return }
+//            guard let weight = pokemon.weight else { return }
+//
+//            imageView.image = pokemon.image
+//            nameLabel.text = pokemon.name?.capitalized
+//
+//            configureLabel(label: typeLabel, title: "Type", details: type)
+//            configureLabel(label: defenseLabel, title: "Defense", details: "\(defense)")
+//            configureLabel(label: heightLabel, title: "Height", details: "\(height)")
+//            configureLabel(label: weightLabel, title: "Weight", details: "\(weight)")
+//            configureLabel(label: pokedexIdLabel, title: "Pokedex Id", details: "\(id)")
+//            configureLabel(label: attackLabel, title: "Base Attack", details: "\(attack)")
+//
+//            print(pokemon.evolutionChain)
+//        }
+//    }
+    
+    var pokemonViewModel: PokemonViewModel?{
+        didSet{
+            guard let pokemonViewModel = self.pokemonViewModel else { return }
+            guard let type = pokemonViewModel.type else { return }
+            guard let defense = pokemonViewModel.defense else { return }
+            guard let attack = pokemonViewModel.attack else { return }
+            guard let id = pokemonViewModel.id else { return }
+            guard let height = pokemonViewModel.height else { return }
+            guard let weight = pokemonViewModel.weight else { return }
             
-            imageView.image = pokemon.image
-            nameLabel.text = pokemon.name?.capitalized
+            nameLabel.text = pokemonViewModel.name?.capitalized
+            imageView.image = pokemonViewModel.image
             
             configureLabel(label: typeLabel, title: "Type", details: type)
             configureLabel(label: defenseLabel, title: "Defense", details: "\(defense)")
@@ -38,7 +62,6 @@ class InfoView: UIView {
             configureLabel(label: pokedexIdLabel, title: "Pokedex Id", details: "\(id)")
             configureLabel(label: attackLabel, title: "Base Attack", details: "\(attack)")
             
-            print(pokemon.evolutionChain)
         }
     }
     
@@ -120,8 +143,8 @@ class InfoView: UIView {
     // MARK: - Selectors
     
     @objc func handleViewMoreInfo() {
-        guard let pokemon = self.pokemon else { return }
-        delegate?.dismissInfoView(withPokemon: pokemon)
+        guard let pokemonViewModel = self.pokemonViewModel else { return }
+        delegate?.dismissInfoView(withPokemonViewModel: pokemonViewModel)
     }
     
     // MARK: - Helper Functions

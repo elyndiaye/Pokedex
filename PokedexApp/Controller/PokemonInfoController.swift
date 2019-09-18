@@ -13,14 +13,14 @@ class PokemonInfoController: UIViewController {
     
     // MARK: - Properties
     
-    var pokemon: Pokemon? {
+    var pokemonViewModel: PokemonViewModel? {
         didSet {
-            navigationItem.title = pokemon?.name?.capitalized
-            imageView.image = pokemon?.image
-            infoLabel.text = pokemon?.description
-            infoView.pokemon = pokemon
+            navigationItem.title = pokemonViewModel?.name?.capitalized
+            imageView.image = pokemonViewModel?.image
+            infoLabel.text = pokemonViewModel?.description
+            infoView.pokemonViewModel = pokemonViewModel
             
-            if let evoArray = pokemon?.evoArray {
+            if let evoArray = pokemonViewModel?.evoArray {
                 if evoArray.count > 1 {
                     firstEvoImageView.image = evoArray[0].image
                     secondEvoImageView.image = evoArray[1].image
