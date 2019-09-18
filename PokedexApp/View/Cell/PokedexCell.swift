@@ -10,7 +10,7 @@ import UIKit
 import Reusable
 
 protocol PokedexCellDelegate {
-    func presentInfoView(withPokemon pokemon: Pokemon)
+    func presentInfoView(withPokemonViewModel pokemonViewModel: PokemonViewModel)
 }
 
 class PokedexCell: UICollectionViewCell, Reusable {
@@ -18,10 +18,10 @@ class PokedexCell: UICollectionViewCell, Reusable {
     //MARK: - PROPERTIES
     var delegate: PokedexCellDelegate?
     
-    var pokemon: Pokemon? {
+    var pokemonViewModel: PokemonViewModel? {
         didSet {
-            nameLabel.text = pokemon?.name?.capitalized
-            imageView.image = pokemon?.image
+            nameLabel.text = pokemonViewModel?.name?.capitalized
+            imageView.image = pokemonViewModel?.image
         }
     }
     
@@ -65,8 +65,8 @@ class PokedexCell: UICollectionViewCell, Reusable {
     
     @objc func handleLongPress(sender: UILongPressGestureRecognizer) {
         if sender.state == .began {
-            guard let pokemon = self.pokemon else { return }
-            delegate?.presentInfoView(withPokemon: pokemon)
+            guard let pokemonViewModel = self.pokemonViewModel else { return }
+            delegate?.presentInfoView(withPokemonViewModel: pokemonViewModel)
         }
     }
     

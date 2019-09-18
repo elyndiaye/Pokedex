@@ -13,8 +13,8 @@ class PokedexController: UICollectionViewController{
     
     //MARK - Properties
     
-    var pokemon = [Pokemon]()
-    var filteredPokemon = [Pokemon]()
+    var pokemonViewModels = [PokemonViewModel]()
+    var filteredPokemonViewModels = [PokemonViewModel]()
     var inSearchMode = false
     var searchBar: UISearchBar!
     
@@ -45,14 +45,14 @@ class PokedexController: UICollectionViewController{
         configureSearchBar(shouldShow: true)
     }
     @objc func handleDismissal() {
-        dismissInfoView(pokemon: nil)
+        dismissInfoView(withPokemonViewModel: nil)
     }
     
     // MARK: - API
     func fetchPokemon() {
         Service.shared.fetchPokemon { (pokemon) in
             DispatchQueue.main.async {
-                self.pokemon = pokemon
+                self.pokemonViewModels = pokemon.map({ return PokemonViewModel(pokemon: $0) })
                 self.collectionView.reloadData()
             }
         }
@@ -60,9 +60,9 @@ class PokedexController: UICollectionViewController{
     
     //MARK: - HELPER FUNCTIONS
     
-    func showPokemonInfoController(withPokemon pokemon: Pokemon) {
+    func showPokemonInfoController(withPokemon pokemon: PokemonViewModel) {
         let controller = PokemonInfoController()
-        controller.pokemon = pokemon
+        controller.pokemonViewModel = pokemon
         self.navigationController?.pushViewController(controller, animated: true)
     }
     
@@ -91,7 +91,7 @@ class PokedexController: UICollectionViewController{
         navigationItem.rightBarButtonItem?.tintColor = .white
     }
     
-    func dismissInfoView(pokemon: Pokemon?) {
+    func dismissInfoView(pokemonViewModel: PokemonViewModel?) {
         UIView.animate(withDuration: 0.5, animations: {
             self.visualEffectView.alpha = 0
             self.infoView.alpha = 0
@@ -99,7 +99,7 @@ class PokedexController: UICollectionViewController{
         }) { (_) in
             self.infoView.removeFromSuperview()
             self.navigationItem.rightBarButtonItem?.isEnabled = true
-            guard let pokemon = pokemon else { return }
+            guard let pokemon = pokemonViewModel else { return }
           //  self.showPokemonInfoController(withPokemon: pokemon)
         }
     }
@@ -140,7 +140,7 @@ extension PokedexController: UISearchBarDelegate {
             view.endEditing(true)
         } else {
             inSearchMode = true
-            filteredPokemon = pokemon.filter({ $0.name?.range(of: searchText.lowercased()) != nil })
+            filteredPokemonViewModels = pokemonViewModels.filter({ $0.name?.range(of: searchText.lowercased()) != nil })
             collectionView.reloadData()
         }
     }
@@ -150,31 +150,32 @@ extension PokedexController: UISearchBarDelegate {
 
 extension PokedexController{
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return inSearchMode ? filteredPokemon.count : pokemon.count
+        return inSearchMode ? filteredPokemonViewModels.count : pokemonViewModels.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(for: indexPath, cellType: PokedexCell.self)
         
-        cell.pokemon = inSearchMode ? filteredPokemon[indexPath.row] : pokemon[indexPath.row]
+        cell.pokemonViewModel = inSearchMode ? filteredPokemonViewModels[indexPath.row] : pokemonViewModels[indexPath.row]
         cell.delegate = self
         return cell
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let poke = inSearchMode ? filteredPokemon[indexPath.row] : pokemon[indexPath.row]
+        let poke = inSearchMode ? filteredPokemonViewModels[indexPath.row] : pokemonViewModels[indexPath.row]
+        // guard let poke = inSearchMode ? filteredPokemonViewModels[indexPath.row].pokemon : pokemonViewModels[indexPath.row].pokemon else { return }
         var pokemonEvoArray = [Pokemon]()
-        
-        if let evoChain = poke.evolutionChain {
-            let evolutionChain = EvolutionChain(evolutionArray: evoChain)
-            let evoIds = evolutionChain.evolutionIds
-            
-            evoIds.forEach { (id) in
-                pokemonEvoArray.append(pokemon[id - 1])
-            }
-            poke.evoArray = pokemonEvoArray
-        }
-        
+
+//        if let evoChain = poke.evolutionChain {
+//            let evolutionChain = EvolutionChain(evolutionArray: evoChain)
+//            let evoIds = evolutionChain.evolutionIds
+//
+//            evoIds.forEach { (id) in
+//                pokemonEvoArray.append(pokemonViewModels[id - 1])
+//            }
+//            poke.evoArray = pokemonEvoArray
+//        }
+        print(poke)
         showPokemonInfoController(withPokemon: poke)
     }
 }
@@ -195,8 +196,7 @@ extension PokedexController: UICollectionViewDelegateFlowLayout{
 // MARK: - PokedexCellDelegate
 
 extension PokedexController: PokedexCellDelegate {
-    
-    func presentInfoView(withPokemon pokemon: Pokemon) {
+ func presentInfoView(withPokemonViewModel pokemonViewModel: PokemonViewModel) {
         print("passou")
         
         configureSearchBar(shouldShow: false)
@@ -205,7 +205,8 @@ extension PokedexController: PokedexCellDelegate {
         view.addSubview(infoView)
         infoView.configureViewComponents()
         infoView.delegate = self
-        infoView.pokemon = pokemon
+    print(pokemonViewModel)
+        infoView.pokemonViewModel = pokemonViewModel
         infoView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: view.frame.width - 64, height: 350)
         infoView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         infoView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -44).isActive = true
@@ -225,7 +226,7 @@ extension PokedexController: PokedexCellDelegate {
 
 extension PokedexController: InfoViewDelegate {
 
-    func dismissInfoView(withPokemon pokemon: Pokemon?) {
-        dismissInfoView(pokemon: pokemon)
+    func dismissInfoView(withPokemonViewModel pokemonViewModel: PokemonViewModel?) {
+        dismissInfoView(pokemonViewModel: pokemonViewModel)
     }
 }
