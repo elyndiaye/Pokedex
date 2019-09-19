@@ -18,6 +18,9 @@ class PokedexController: UICollectionViewController{
     var inSearchMode = false
     var searchBar: UISearchBar!
     
+    var collectionViewDataSource: PokemonCollectionViewDataSource?
+    var collectionViewDelegate: PokemonCollectionViewDelegate?
+    
 //    let infoView: InfoView = {
 //        let view = InfoView()
 //        view.layer.cornerRadius = 5
@@ -50,10 +53,23 @@ class PokedexController: UICollectionViewController{
         Service.shared.fetchPokemon { (pokemon) in
             DispatchQueue.main.async {
                 self.pokemon = pokemon
-                self.collectionView.reloadData()
+                //self.collectionView.reloadData()
+                self.setupCollectionView(width: pokemon)
             }
         }
     }
+    
+    //MARK: - SetupCollectionView
+    func setupCollectionView(width pokemons: [Pokemon]){
+        collectionViewDataSource = PokemonCollectionViewDataSource(pokemons: pokemons, collectionView: collectionView)
+        collectionViewDelegate = PokemonCollectionViewDelegate()
+        
+        collectionView.delegate = collectionViewDelegate
+        collectionView.dataSource = collectionViewDataSource
+        collectionView.reloadData()
+        
+    }
+    
     
     //MARK: - HELPER FUNCTIONS
     func configureViewComponents(){
