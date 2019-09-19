@@ -9,9 +9,15 @@
 import UIKit
 import Reusable
 
+protocol PokedexCellDelegate {
+    func presentInfoView(withPokemon pokemon: Pokemon)
+}
+
 class PokedexCell: UICollectionViewCell, Reusable {
     
     //MARK: - PROPERTIES
+    var delegate: PokedexCellDelegate?
+    
     var pokemon: Pokemon? {
         didSet {
             nameLabel.text = pokemon?.name?.capitalized
@@ -60,7 +66,7 @@ class PokedexCell: UICollectionViewCell, Reusable {
     @objc func handleLongPress(sender: UILongPressGestureRecognizer) {
         if sender.state == .began {
             guard let pokemon = self.pokemon else { return }
-           // delegate?.presentInfoView(withPokemon: pokemon)
+            delegate?.presentInfoView(withPokemon: pokemon)
         }
     }
     
