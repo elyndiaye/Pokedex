@@ -2,21 +2,21 @@
 //  InfoView.swift
 //  PokedexApp
 //
-//  Created by Ely Assumpcao Ndiaye on 14/09/2019.
+//  Created by ely.assumpcao.ndiaye on 24/09/19.
 //  Copyright © 2019 Ely Assumpcao Ndiaye. All rights reserved.
 //
 
 import Foundation
 import UIKit
-//
-//protocol InfoViewDelegate {
-//    func dismissInfoView(withPokemon pokemon: Pokemon?)
-//}
 
-class InfoView: UIView {
+protocol InfoViewDelegate {
+    func dismissInfoView(withPokemon pokemon: Pokemon?)
+}
+
+final class InfoView: UIView {
     
     // MARK: - Properties
-//    var delegate: InfoViewDelegate?
+    var delegate: InfoViewDelegate?
     
     var pokemon: Pokemon? {
         didSet {
@@ -111,6 +111,7 @@ class InfoView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        backgroundColor = .white
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -121,7 +122,7 @@ class InfoView: UIView {
     
     @objc func handleViewMoreInfo() {
         guard let pokemon = self.pokemon else { return }
-//        delegate?.dismissInfoView(withPokemon: pokemon)
+        delegate?.dismissInfoView(withPokemon: pokemon)
     }
     
     // MARK: - Helper Functions
@@ -198,3 +199,48 @@ class InfoView: UIView {
     }
     
 }
+
+extension InfoView: CodeView{
+    func buildViewHierarchy() {
+        self.layer.masksToBounds = true
+        addSubview(nameContainerView)
+        addSubview(imageView)
+        addSubview(typeLabel)
+        addSubview(defenseLabel)
+        
+        let separatorView = UIView()
+        separatorView.backgroundColor = .groupTableViewBackground
+        addSubview(separatorView)
+        addSubview(heightLabel)
+        addSubview(weightLabel)
+        addSubview(pokedexIdLabel)
+        addSubview(attackLabel)
+        addSubview(infoButton)
+        infoButton.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 12, paddingBottom: 12, paddingRight: 12, width: 0, height: 50)
+        
+    }
+    
+    func setupConstraints() {
+        nameContainerView.snp.makeConstraints { make in
+            make.top.right.left.equalToSuperview()
+            make.height.equalTo(50)
+        }
+        imageView.snp.makeConstraints { maker in
+            maker.top.equalTo(nameContainerView.snp.bottom)
+            maker.topMargin.equalTo(24)
+            maker.leftMargin.equalTo(12)
+            maker.centerX.equalToSuperview()
+            maker.height.equalTo(60)
+            maker.width.equalTo(100)
+        }
+       
+        
+    }
+    
+    func setupAdditionalConfiguration() {
+        
+    }
+    
+    
+}
+
