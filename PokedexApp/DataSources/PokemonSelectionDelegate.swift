@@ -7,3 +7,7 @@
 //
 
 import Foundation
+
+protocol PokemonSelectionDelegate: class{
+    func didSelect(pokemon: Pokemon)
+}

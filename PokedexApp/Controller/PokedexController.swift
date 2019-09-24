@@ -21,17 +21,6 @@ class PokedexController: UICollectionViewController{
     var collectionViewDataSource: PokemonCollectionViewDataSource?
     var collectionViewDelegate: PokemonCollectionViewDelegate?
     
-//    let infoView: InfoView = {
-//        let view = InfoView()
-//        view.layer.cornerRadius = 5
-//        return view
-//    }()
-//    
-//    let visualEffectView: UIVisualEffectView = {
-//        let blurEffect = UIBlurEffect(style: .dark)
-//        let view = UIVisualEffectView(effect: blurEffect)
-//        return view
-//    }()
     let infoView: InfoView = {
         let view = InfoView()
         view.layer.cornerRadius = 5
@@ -76,17 +65,15 @@ class PokedexController: UICollectionViewController{
     //MARK: - SetupCollectionView
     func setupCollectionView(width pokemons: [Pokemon]){
         collectionViewDataSource = PokemonCollectionViewDataSource(pokemons: pokemons, collectionView: collectionView)
-        collectionViewDelegate = PokemonCollectionViewDelegate()
+        collectionViewDelegate = PokemonCollectionViewDelegate(pokemons: pokemons, delegate: self)
         
         collectionView.delegate = collectionViewDelegate
         collectionView.dataSource = collectionViewDataSource
         collectionView.reloadData()
-        
     }
     
     
     //MARK: - HELPER FUNCTIONS
-    
     func showPokemonInfoController(withPokemon pokemon: Pokemon) {
         let controller = PokemonInfoController()
         controller.pokemon = pokemon
@@ -127,7 +114,7 @@ class PokedexController: UICollectionViewController{
             self.infoView.removeFromSuperview()
             self.navigationItem.rightBarButtonItem?.isEnabled = true
             guard let pokemon = pokemon else { return }
-          //  self.showPokemonInfoController(withPokemon: pokemon)
+            //  self.showPokemonInfoController(withPokemon: pokemon)
         }
     }
     
@@ -152,75 +139,30 @@ class PokedexController: UICollectionViewController{
 }
 
 // MARK: - UISearchBarDelegate
-
 extension PokedexController: UISearchBarDelegate {
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         configureSearchBar(shouldShow: false)
+        self.setupCollectionView(width: self.pokemon)
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
         if searchText == "" || searchBar.text == nil {
             inSearchMode = false
-            collectionView.reloadData()
+            //collectionView.reloadData()
+            self.setupCollectionView(width: self.pokemon)
             view.endEditing(true)
         } else {
             inSearchMode = true
             filteredPokemon = pokemon.filter({ $0.name?.range(of: searchText.lowercased()) != nil })
-            collectionView.reloadData()
+            self.setupCollectionView(width: filteredPokemon)
+            //collectionView.reloadData()
         }
     }
-}
-
-// MARK: = UICOLLECTIONVIEWDATASOURCE/DELEGATE
-
-extension PokedexController{
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return inSearchMode ? filteredPokemon.count : pokemon.count
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(for: indexPath, cellType: PokedexCell.self)
-        
-        cell.pokemon = inSearchMode ? filteredPokemon[indexPath.row] : pokemon[indexPath.row]
-        cell.delegate = self
-        return cell
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let poke = inSearchMode ? filteredPokemon[indexPath.row] : pokemon[indexPath.row]
-        var pokemonEvoArray = [Pokemon]()
-        
-        if let evoChain = poke.evolutionChain {
-            let evolutionChain = EvolutionChain(evolutionArray: evoChain)
-            let evoIds = evolutionChain.evolutionIds
-            
-            evoIds.forEach { (id) in
-                pokemonEvoArray.append(pokemon[id - 1])
-            }
-            poke.evoArray = pokemonEvoArray
-        }
-        
-        showPokemonInfoController(withPokemon: poke)
-    }
-}
-
-extension PokedexController: UICollectionViewDelegateFlowLayout{
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 32, left: 8, bottom: 8, right: 8)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        let width = (view.frame.width - 36) / 3
-        return CGSize(width: width, height: width)
-    }
-    
 }
 
 // MARK: - PokedexCellDelegate
-
 extension PokedexController: PokedexCellDelegate {
     
     func presentInfoView(withPokemon pokemon: Pokemon) {
@@ -249,10 +191,31 @@ extension PokedexController: PokedexCellDelegate {
 }
 
 // MARK: - InfoViewDelegate
-
 extension PokedexController: InfoViewDelegate {
-
+    
     func dismissInfoView(withPokemon pokemon: Pokemon?) {
         dismissInfoView(pokemon: pokemon)
     }
+}
+
+// MARK: - PokedexSelectionDelegate
+extension PokedexController: PokemonSelectionDelegate {
+    func didSelect(pokemon: Pokemon) {
+        let poke = pokemon
+        var pokemonEvoArray = [Pokemon]()
+        
+        if let evoChain = poke.evolutionChain {
+            let evolutionChain = EvolutionChain(evolutionArray: evoChain)
+            let evoIds = evolutionChain.evolutionIds
+            
+            evoIds.forEach { (id) in
+                pokemonEvoArray.append(self.pokemon[id - 1])
+            }
+            poke.evoArray = pokemonEvoArray
+        }
+        print(poke)
+        showPokemonInfoController(withPokemon: poke)
+    }
+    
+    
 }
